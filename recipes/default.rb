@@ -87,7 +87,8 @@ if node['tomcat']['base_version'].to_i == 8
     owner 'root'
     group 'root'
     mode 0755
-    notifies :restart, 'service[tomcat]'
+
+#    notifies :restart, 'service[tomcat]'
   end
 
 # Otherwise, use standard package installer
