@@ -41,12 +41,67 @@ end
 
 tomcat_pkgs.compact!
 
-tomcat_pkgs.each do |pkg|
-  package pkg do
-    action :install
-    version node['tomcat']['base_version'].to_s if platform_family?('smartos')
+
+# Custom setup for Tomcat 8
+if node['tomcat']['base_version'].to_i == 8
+
+  user "tomcat8" do
+    action :create
   end
+
+  group "tomcat8" do
+    action :create
+    members "tomcat8"
+  end
+
+  remote_file "#{Chef::Config[:file_cache_path]}/apache-tomcat-8.0.9.tar.gz" do
+    source "http://download.nextag.com/apache/tomcat/tomcat-8/v8.0.9/bin/apache-tomcat-8.0.9.tar.gz"
+  end
+
+  bash 'extract_tomcat8_binary' do
+    user 'root'
+    cwd Chef::Config[:file_cache_path]
+    code <<-EOH
+      tar xzf apache-tomcat-8.0.9.tar.gz
+      mv apache-tomcat-8.0.9 tomcat8
+      mv tomcat8 /usr/share/
+      mkdir -p /usr/share/tomcat8/common/classes
+      chmod -R 777 /usr/share/tomcat8
+      EOH
+  end
+
+  link "/var/lib/tomcat8" do
+    to "/usr/share/tomcat8"
+    owner 'root'
+    group 'root'
+  end
+
+  link "/etc/tomcat8" do
+    to "/usr/share/tomcat8/conf"
+    owner 'root'
+    group 'root'
+  end
+
+  template "/etc/init.d/tomcat8" do
+    source 'tomcat8.erb'
+    owner 'root'
+    group 'root'
+    mode 0755
+    notifies :restart, 'service[tomcat]'
+  end
+
+# Otherwise, use standard package installer
+else
+
+  tomcat_pkgs.each do |pkg|
+    package pkg do
+      action :install
+      version node['tomcat']['base_version'].to_s if platform_family?('smartos')
+    end
+   end
+
 end
+
 
 unless node['tomcat']['deploy_manager_apps']
   directory "#{node['tomcat']['webapp_dir']}/manager" do
