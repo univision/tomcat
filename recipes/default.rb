@@ -87,8 +87,11 @@ if node['tomcat']['base_version'].to_i == 8
     owner 'root'
     group 'root'
     mode 0755
+  end
 
-#    notifies :restart, 'service[tomcat]'
+  service "tomcat" do
+     init_command "/etc/init.d/tomcat8"
+     action :start
   end
 
 # Otherwise, use standard package installer
