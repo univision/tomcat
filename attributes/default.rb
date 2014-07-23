@@ -23,8 +23,8 @@ default['tomcat']['ssl_port'] = 8443
 default['tomcat']['ssl_proxy_port'] = nil
 default['tomcat']['ajp_port'] = 8009
 default['tomcat']['shutdown_port'] = 8005
-default['tomcat']['catalina_options'] = '-Xmx1024m -XX:MaxPermSize=256M -Djava.awt.headless=true'
-default['tomcat']['java_options'] = '-Xmx128M -Djava.awt.headless=true'
+default['tomcat']['catalina_options'] = ''
+default['tomcat']['java_options'] = '-Xmx1024m -XX:MaxPermSize=256M -Djava.awt.headless=true'
 default['tomcat']['use_security_manager'] = false
 default['tomcat']['authbind'] = 'no'
 default['tomcat']['deploy_manager_apps'] = true
