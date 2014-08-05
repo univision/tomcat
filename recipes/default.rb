@@ -45,65 +45,68 @@ tomcat_pkgs.compact!
 # Custom setup for Tomcat 8
 if node['tomcat']['base_version'].to_i == 8
 
-  user "tomcat8" do
+  # Define version and construct download link
+  tomcat8_mirror  = node['tomcat']['mirror']  || "http://download.nextag.com"
+  tomcat8_version = node['tomcat']['release_version'] || "0.9"
+  tomcat8_package = "apache-tomcat-8.#{tomcat8_version}"
+  tomcat8_tarball = "#{tomcat8_package}.tar.gz"
+  tomcat8_link = "#{tomcat8_mirror}/apache/tomcat/tomcat-8/v8.#{tomcat8_version}/bin/#{tomcat8_tarball}"
+
+  # Create user & group
+  user node[:tomcat][:user] do
     action :create
   end
-
-  group "tomcat8" do
+  group node[:tomcat][:group] do
     action :create
-    members "tomcat8"
+    members node[:tomcat][:user]
   end
 
-  remote_file "#{Chef::Config[:file_cache_path]}/apache-tomcat-8.0.9.tar.gz" do
-    source "http://download.nextag.com/apache/tomcat/tomcat-8/v8.0.9/bin/apache-tomcat-8.0.9.tar.gz"
+  # Download tarball, extract, and move into $TOMCAT_HOME
+  remote_file "#{Chef::Config[:file_cache_path]}/#{tomcat8_tarball}" do
+    source "#{tomcat8_link}"
   end
-
   bash 'extract_tomcat8_binary' do
     user 'root'
     cwd Chef::Config[:file_cache_path]
     code <<-EOH
-      tar xzf apache-tomcat-8.0.9.tar.gz
-      mv apache-tomcat-8.0.9 tomcat8
-      mv tomcat8 /usr/share/
-      mkdir -p /usr/share/tomcat8/common/classes
-      chmod -R 777 /usr/share/tomcat8
+      mkdir #{node.tomcat.home}
+      tar xzf #{tomcat8_tarball} --strip-components=1 --directory #{node.tomcat.home}
+      mkdir -p #{node.tomcat.home}/common/classes
+      chmod -R 777 #{node.tomcat.home}
       EOH
   end
-
-  link "/var/lib/tomcat8" do
-    to "/usr/share/tomcat8"
+  # create symlink to tomcat base
+  link node[:tomcat][:base] do
+    to node[:tomcat][:home]
     owner 'root'
     group 'root'
   end
-
-  link "/etc/tomcat8" do
-    to "/usr/share/tomcat8/conf"
+  # create symlink to tomcat configuration directory
+  link node[:tomcat][:config_dir] do
+    to "#{node.tomcat.home}/conf"
     owner 'root'
     group 'root'
   end
-
+  # create tomcat8 service
   template "/etc/init.d/tomcat8" do
     source 'tomcat8.erb'
     owner 'root'
     group 'root'
     mode 0755
   end
-
+  # finally, register tomcat as a service within Chef and start it up.
   service "tomcat" do
      init_command "/etc/init.d/tomcat8"
      action :start
   end
-
 # Otherwise, use standard package installer
 else
-
   tomcat_pkgs.each do |pkg|
     package pkg do
       action :install
       version node['tomcat']['base_version'].to_s if platform_family?('smartos')
     end
    end
-
 end
 
 
