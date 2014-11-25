@@ -15,9 +15,9 @@
 
 handlers = 1catalina.org.apache.juli.FileHandler, 2localhost.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler
 
-.handlers = 1catalina.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler
-
 .level = <%= node["tomcat"]["loglevel"] %>
+
+java.util.logging.SimpleFormatter.format = [%1$tc] %4$s: %2$s - %5$s %6$s%n
 
 ############################################################
 # Handler specific properties.
@@ -27,10 +27,12 @@ handlers = 1catalina.org.apache.juli.FileHandler, 2localhost.org.apache.juli.Fil
 1catalina.org.apache.juli.FileHandler.level = FINE
 1catalina.org.apache.juli.FileHandler.directory = ${catalina.base}/logs
 1catalina.org.apache.juli.FileHandler.prefix = catalina.
+1catalina.org.apache.juli.FileHandler.formatter = java.util.logging.SimpleFormatter
 
 2localhost.org.apache.juli.FileHandler.level = FINE
 2localhost.org.apache.juli.FileHandler.directory = ${catalina.base}/logs
 2localhost.org.apache.juli.FileHandler.prefix = localhost.
+2localhost.org.apache.juli.FileHandler.formatter = java.util.logging.SimpleFormatter
 
 java.util.logging.ConsoleHandler.level = FINE
 java.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter
@@ -39,6 +41,19 @@ java.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter
 # Facility specific properties.
 # Provides extra control for each logger.
 ############################################################
+
+com.psddev.level=FINEST
+com.univision.level=FINEST
+com.psddev.dari.util.Task.level=INFO
+com.psddev.dari.db.SqlDatabase.level=INFO
+com.psddev.dari.db.State.level=INFO
+com.psddev.dari.util.PeriodicCache.level=INFO
+#com.psddev.dari=ALL
+
+org.apache.catalina.level = INFO
+org.apache.catalina.startup.HostConfig.level = INFO
+org.apache.catalina.session.ManagerBase.level = INFO
+org.apache.solr.level = WARNING
 
 org.apache.catalina.core.ContainerBase.[Catalina].[localhost].level = INFO
 org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers = 2localhost.org.apache.juli.FileHandler
