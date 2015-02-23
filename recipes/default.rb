@@ -46,11 +46,11 @@ tomcat_pkgs.compact!
 if node['tomcat']['base_version'].to_i == 8
 
   # Define version and construct download link
-  tomcat8_mirror  = node['tomcat']['mirror']  || "http://download.nextag.com"
-  tomcat8_version = node['tomcat']['release_version'] || "0.9"
+  tomcat8_mirror  = "http://archive.apache.org"
+  tomcat8_version = node['tomcat']['release_version'] || "0.15"
   tomcat8_package = "apache-tomcat-8.#{tomcat8_version}"
   tomcat8_tarball = "#{tomcat8_package}.tar.gz"
-  tomcat8_link = "#{tomcat8_mirror}/apache/tomcat/tomcat-8/v8.#{tomcat8_version}/bin/#{tomcat8_tarball}"
+  tomcat8_link = "#{tomcat8_mirror}/dist/tomcat/tomcat-8/v8.#{tomcat8_version}/bin/#{tomcat8_tarball}"
 
   # Create user & group
   user node[:tomcat][:user] do
