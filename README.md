@@ -30,6 +30,8 @@ Attributes
 * `node["tomcat"]["deploy_manager_apps"]` - whether to deploy manager apps, default `true`.
 * `node["tomcat"]["authbind"]` - whether to bind tomcat on lower port numbers, default `no`.
 * `node["tomcat"]["max_threads"]` - maximum number of threads in the connector pool.
+* `node["tomcat"]["max_connections"]` - maximum number of non-blocking connections in the connector pool.
+* `node["tomcat"]["accept_count"]` - maximum queue length for incoming connection requests when all possible request processing threads are in use.
 * `node["tomcat"]["tomcat_auth"]` -
 * `node["tomcat"]["instances"]` - A dictionary defining additional tomcat instances to run.
 * `node["tomcat"]["run_base_instance"]` - Whether or not to run the "base" tomcat instance, default `true`.
