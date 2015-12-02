@@ -88,6 +88,12 @@
              <% if node["tomcat"].has_key?("max_threads") -%>
                maxThreads="<%= node["tomcat"]["max_threads"] %>"
              <% end -%>
+             <% if node["tomcat"].has_key?("max_connections") -%>
+               maxConnections="<%= node["tomcat"]["max_connections"] %>"
+             <% end -%>
+             <% if node["tomcat"].has_key?("accept_count") -%>
+               acceptCount="<%= node["tomcat"]["accept_count"] %>"
+             <% end -%>
                redirectPort="<%= node["tomcat"]["ssl_port"] %>" />
     <!-- A "Connector" using the shared thread pool-->
     <!--
